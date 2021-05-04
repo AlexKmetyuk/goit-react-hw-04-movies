@@ -1,6 +1,9 @@
 import { Component } from "react";
 import { getTrendingMovies } from "../../moviesApi.js";
-import MoviesList from '../MoviesList/MoviesList'
+import MoviesList from "../MoviesList/MoviesList";
+
+import Loader from "react-loader-spinner";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 class TrendingMovies extends Component {
   state = {
@@ -14,17 +17,21 @@ class TrendingMovies extends Component {
       })
     );
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.setState({
-      movies: null
-    })
+      movies: null,
+    });
   }
 
   render() {
     const { movies } = this.state;
 
-    return (
-      <MoviesList movies={movies}/>
+    return movies ? (
+      <MoviesList movies={movies} />
+    ) : (
+      <div className="loader">
+        <Loader type="Circles" />
+      </div>
     );
   }
 }

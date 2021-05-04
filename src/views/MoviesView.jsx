@@ -2,13 +2,17 @@ import { Component } from "react";
 import MoviesList from "../components/MoviesList/MoviesList";
 import SearchForm from "../components/SearchForm/SearchForm";
 import { searchMoviesByQuery } from "../moviesApi.js";
-const queryString = require('query-string')
+import Loader from "react-loader-spinner";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+const queryString = require("query-string");
 
 
-class SearchMovies extends Component {
+
+class MoviesView extends Component {
   state = {
-    query: null,
+    query: '',
     movies: null,
+    showLoader: false
   };
 
   componentDidMount() {
@@ -39,22 +43,31 @@ class SearchMovies extends Component {
 
   searchMovies() {
     const { query } = this.state;
+this.setState({showLoader: true})
     searchMoviesByQuery(query).then((movies) => {
       this.setState({
         movies: movies.results,
       });
-    });
+    }).finally(this.setState({showLoader: false}));
   }
 
   render() {
-    const { movies, query } = this.state;
+    const { movies, query, showLoader } = this.state;
     return (
       <>
         <SearchForm onSubmit={this.onSubmit} query={query} />
-        <MoviesList movies={movies} />
+
+        {!showLoader ? (
+          <MoviesList
+            movies={movies}
+            location={`${this.props.location.pathname}${this.props.location.search}`}
+          />
+        ) : (
+          <div className='loader'><Loader type="Circles" /></div>
+        )}
       </>
     );
   }
 }
 
-export default SearchMovies;
+export default MoviesView;
